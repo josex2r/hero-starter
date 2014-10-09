@@ -27,6 +27,45 @@
 
 */
 
+
+// // The "Berserker"
+var move = function(gameData, helpers) {
+	var myHero = gameData.activeHero;
+	
+	var healthWellStats = helpers.findNearestObjectDirectionAndDistance(gameData.board, myHero, function(boardTile) {
+		if (boardTile.type === 'HealthWell') {
+			return true;
+		}
+	});
+	
+	var randomEnemy = helpers.findNearestObjectDirectionAndDistance(gameData.board, myHero, function(boardTile) {
+    	return boardTile.type === 'Hero' && boardTile.team !== myHero.team;
+	});
+	
+	var distanceToHealthWell = healthWellStats.distance;
+	
+	if (myHero.health < 10) {
+		//Berserker mode. Die with honor!!!!
+		return helpers.findNearestEnemy(gameData);
+	} else if (myHero.health < 30) {
+		//Houston, We've Got a Problem. Go heal!!!!
+		return helpers.findNearestHealthWell(gameData);
+	} else if (myHero.health < 100 && distanceToHealthWell > 1) {
+		//Attack if you are full health and are close to a enemy
+		return helpers.findNearestEnemy(gameData);
+	} else if (myHero.health < 100 && distanceToHealthWell === 1) {
+		//Heal if you aren't full health and are close to a health well already
+		return directionToHealthWell;
+	} else if (myHero.health === 100 && randomEnemy <= 2) {
+		//Attack if you are full health and close to a enemy
+		return randomEnemy;
+	} else if (myHero.health === 100){
+		//If healthy, find a team menber and help it!
+		return helpers.findNearestTeamMember(gameData);
+	}
+};
+
+
 //TL;DR: If you are new, just uncomment the 'move' function that you think sounds like fun!
 //       (and comment out all the other move functions)
 
@@ -80,6 +119,7 @@
 // };
 
 // // The "Safe Diamond Miner"
+/*
 var move = function(gameData, helpers) {
   var myHero = gameData.activeHero;
 
@@ -103,7 +143,7 @@ var move = function(gameData, helpers) {
     //If healthy, go capture a diamond mine!
     return helpers.findNearestNonTeamDiamondMine(gameData);
   }
-};
+};*/
 
 // // The "Selfish Diamond Miner"
 // // This hero will attempt to capture diamond mines (even those owned by teammates).
